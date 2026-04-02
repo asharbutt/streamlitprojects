@@ -29,7 +29,7 @@ r = st.sidebar.number_input("Risk-Free Rate", value=0.05, min_value=-0.05, max_v
 vol = st.sidebar.number_input("Volatility (σ)", value=0.20, min_value=0.01, max_value=2.0, step=0.01, format="%.2f")
 q = st.sidebar.number_input("Dividend Yield (q)", value=0.0, min_value=0.0, max_value=0.20, step=0.005, format="%.3f")
 #steps = int(st.sidebar.number_input("Number of Steps", value=1, min_value=1, max_value=1000000000000, step=1))
-steps = st.slider("Steps", min_value=1, max_value=10, value=4)
+steps = st.slider("Steps", min_value=1, max_value=100, value=4)
 option_type = st.sidebar.radio("Option Type", ["call", "put"])
 exercise_type = st.sidebar.radio("Option Type", ["European", "American"])
 
