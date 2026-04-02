@@ -42,3 +42,35 @@ class european_binomial:
 
         self.option_matrix[0, 0] = self.discount_factor * (self.option_matrix[0,  1] * self.probability + self.option_matrix[1, 1] * (1 - self.probability))
         return self.option_matrix[0, 0]
+
+def plot_binomial_tree(tree: european_binomial):
+    node_x, node_y, node_text = [], [], []
+    edge_x, edge_y = [], []
+
+    for j in range(tree.steps):  # 0 to steps-1 (all columns)
+        for i in range(j + 1):  # 0 to j (nodes at this step)
+            price = tree.asset_matrix[i, j]
+            node_x.append(j)  # x = time step (not i)
+            node_y.append(price)
+            node_text.append(f"S={price:.2f}<br>V={tree.option_matrix[i, j]:.2f}")
+
+            if j < tree.steps - 1:  # don't look ahead from last column
+                next_up = tree.asset_matrix[i, j + 1]
+                next_down = tree.asset_matrix[i + 1, j + 1]
+                for next_price in [next_up, next_down]:
+                    edge_x += [j, j + 1, None]
+                    edge_y += [price, next_price, None]
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=edge_x, y=edge_y, mode='lines',
+        line=dict(color='gray', width=1), hoverinfo='none'
+    ))
+    fig.add_trace(go.Scatter(
+        x=node_x, y=node_y, mode='markers+text',
+        marker=dict(size=50, color='royalblue'),
+        text=node_text, textposition='middle center',
+        textfont=dict(size=8, color='white')
+    ))
+    fig.update_layout(template='plotly_dark', showlegend=False)
+    return fig
