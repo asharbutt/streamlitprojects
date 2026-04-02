@@ -41,7 +41,7 @@ fig = bt.plot_binomial_tree(p)
 fig.update_layout(
     template='plotly_dark',
     showlegend=False,
-    height=800        # pixels — increase as needed
+    height=1000        # pixels — increase as needed
 )
 st.plotly_chart(fig)
 
