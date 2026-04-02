@@ -1,10 +1,13 @@
 import numpy as np
 import plotly.graph_objects as go
 
-class european_binomial:
+import numpy as np
+import plotly.graph_objects as go
+class binomial_tree_vanilla:
 
-    def __init__(self, steps, vol, spot, strike, t,option_type, r):
+    def __init__(self, steps, vol, spot, strike, t,option_type, r,exercise_type):
         self.steps = steps+1 # We start off at 0,0 and then have x additional steps from that
+        self.exercise_type = exercise_type
         self.initial_spot = spot
         self.time_step = t / steps
         self.strike = strike
@@ -16,6 +19,36 @@ class european_binomial:
         self.down = pow(self.up,-1)
         self.probability = (np.exp(r*self.time_step)-self.down)/(self.up - self.down)
         self.discount_factor = np.exp(-r*self.time_step)
+
+    def compute_european_option(self):
+        # Now we calculate the option value, starting off from the end and working backwards:
+        self.option_matrix[:,-1] = np.maximum(self.option_flag*(self.asset_matrix[:,-1]-self.strike),0)
+
+        for j in range(self.steps-2, 0, -1):
+            for i in range(0, self.steps-1):
+                if i > j:
+                    break
+                self.option_matrix[i,j] = self.discount_factor * (self.option_matrix[i,j+1] * self.probability + self.option_matrix[i+1,j+1] * (1 - self.probability))
+
+        self.option_matrix[0, 0] = self.discount_factor * (self.option_matrix[0,  1] * self.probability + self.option_matrix[1, 1] * (1 - self.probability))
+
+        print(self.option_matrix)
+        return self.option_matrix[0, 0]
+
+    def compute_american_option(self):
+        # Now we calculate the option value, starting off from the end and working backwards:
+        self.option_matrix[:,-1] = np.maximum(self.option_flag*(self.asset_matrix[:,-1]-self.strike),0)
+
+        for j in range(self.steps-2, 0, -1):
+            for i in range(0, self.steps-1):
+                if i > j:
+                    break
+                self.option_matrix[i,j] = np.maximum(self.discount_factor * (self.option_matrix[i,j+1] * self.probability + self.option_matrix[i+1,j+1] * (1 - self.probability)), self.option_flag*(self.asset_matrix[i,j]-self.strike))
+
+        self.option_matrix[0, 0] = np.maximum(self.discount_factor * (self.option_matrix[0,  1] * self.probability + self.option_matrix[1, 1] * (1 - self.probability)),self.option_flag*(self.asset_matrix[0,0]-self.strike))
+
+        print(self.option_matrix)
+        return self.option_matrix[0, 0]
 
     def run_tree(self):
         # Compute the asset matrix first:
@@ -32,19 +65,13 @@ class european_binomial:
         print("Asset Matrix: ")
         print(self.asset_matrix)
 
-        # Now we calculate the option value, starting off from the end and working backwards:
-        self.option_matrix[:,-1] = np.maximum(self.option_flag*(self.asset_matrix[:,-1]-self.strike),0)
+        if self.exercise_type == 'european': option_price = self.compute_european_option()
+        elif self.exercise_type == 'american':  option_price = self.compute_american_option()
 
-        for j in range(self.steps-2, 0, -1):
-            for i in range(0, self.steps-1):
-                if i > j:
-                    break
-                self.option_matrix[i,j] = self.discount_factor * (self.option_matrix[i,j+1] * self.probability + self.option_matrix[i+1,j+1] * (1 - self.probability))
+        return option_price
 
-        self.option_matrix[0, 0] = self.discount_factor * (self.option_matrix[0,  1] * self.probability + self.option_matrix[1, 1] * (1 - self.probability))
-        return self.option_matrix[0, 0]
 
-def plot_binomial_tree(tree: european_binomial):
+def plot_binomial_tree(tree: binomial_tree_vanilla):
     node_x, node_y, node_text = [], [], []
     edge_x, edge_y = [], []
 
