@@ -65,8 +65,8 @@ class binomial_tree_vanilla:
         print("Asset Matrix: ")
         print(self.asset_matrix)
 
-        if self.exercise_type == 'european': option_price = self.compute_european_option()
-        elif self.exercise_type == 'american':  option_price = self.compute_american_option()
+        if self.exercise_type == 'European': option_price = self.compute_european_option()
+        elif self.exercise_type == 'American':  option_price = self.compute_american_option()
 
         return option_price
 
