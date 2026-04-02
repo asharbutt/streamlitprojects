@@ -3,8 +3,9 @@ import plotly.graph_objects as go
 
 import numpy as np
 import plotly.graph_objects as go
-class binomial_tree_vanilla:
 
+class binomial_tree_vanilla:
+    
     def __init__(self, steps, vol, spot, strike, t,option_type, r,exercise_type):
         self.steps = steps+1 # We start off at 0,0 and then have x additional steps from that
         self.exercise_type = exercise_type
@@ -67,7 +68,6 @@ class binomial_tree_vanilla:
 
         if self.exercise_type == 'European': option_price = self.compute_european_option()
         elif self.exercise_type == 'American':  option_price = self.compute_american_option()
-
         return option_price
 
 
