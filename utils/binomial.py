@@ -62,15 +62,7 @@ def plot_binomial_tree(tree: european_binomial):
                     edge_y += [price, next_price, None]
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=edge_x, y=edge_y, mode='lines',
-        line=dict(color='gray', width=1), hoverinfo='none'
-    ))
-    fig.add_trace(go.Scatter(
-        x=node_x, y=node_y, mode='markers+text',
-        marker=dict(size=50, color='royalblue'),
-        text=node_text, textposition='middle center',
-        textfont=dict(size=8, color='white')
-    ))
+    fig.add_trace(go.Scatter(x=edge_x, y=edge_y, mode='lines',line=dict(color='gray', width=1), hoverinfo='none'))
+    fig.add_trace(go.Scatter(x=node_x, y=node_y, mode='markers+text',marker=dict(size=50, color='royalblue'),text=node_text, textposition='middle center',textfont=dict(size=8, color='white')))
     fig.update_layout(template='plotly_dark', showlegend=False)
     return fig
