@@ -15,7 +15,7 @@ st.set_page_config(
 
 st.title("Equity Binomial Tree Pricer")
 st.markdown("European and American Equity Option pricing using binomial tree method")
-
+st.write("The option price is: ", f"{option_price:.4f}")
 # ══════════════════════════
 # SIDEBAR: INPUT PARAMETERS
 # ══════════════════════════
@@ -38,4 +38,4 @@ option_price = p.run_tree()
 
 fig = bt.plot_binomial_tree(p)
 st.plotly_chart(fig)
-st.write("The option price is: ", f"{option_price:.4f}")
+
