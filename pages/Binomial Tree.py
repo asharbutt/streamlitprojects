@@ -36,4 +36,6 @@ exercise_type = st.sidebar.radio("Option Type", ["European", "American"])
 p = bt.european_binomial(steps,vol,S,K,T, option_type,r)
 option_price = p.run_tree()
 
+fig = bt.plot_binomial_tree(p)
+fig.show()
 st.write("The option price is: ", f"{option_price:.4f}")
