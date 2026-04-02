@@ -1,4 +1,4 @@
-from util import binomial as bt
+from utils import binomial as bt
 
 import streamlit as st
 import numpy as np
