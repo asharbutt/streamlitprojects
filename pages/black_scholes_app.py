@@ -11,7 +11,7 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import bs as bs
+from utils import bs as bs
 
 
 # ── Page config ──
