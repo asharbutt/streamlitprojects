@@ -1,11 +1,12 @@
 import streamlit as st
 
-st.title("Quant Finance Toolkit")
+st.title("Python tools")
 st.markdown("""
-A collection of quantitative finance tools built in Python.
+A collection of tools built in Python.
 
 **Tools:**
 - Black-Scholes options pricer
 - Monte Carlo simulation
-- More coming soon...
+- European Binomial Tree 
+- American Binomial Tree
 """)
