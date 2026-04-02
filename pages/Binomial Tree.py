@@ -38,10 +38,6 @@ p = bt.european_binomial(steps,vol,S,K,T, option_type,r)
 option_price = p.run_tree()
 st.write("The option price is: ", f"{option_price:.4f}")
 fig = bt.plot_binomial_tree(p)
-fig.update_layout(
-    template='plotly_dark',
-    showlegend=False,
-    height=1000        # pixels — increase as needed
-)
+fig.update_layout(template='plotly_dark',showlegend=False,height=1000)
 st.plotly_chart(fig)
 
