@@ -5,7 +5,7 @@ from plotly.subplots import make_subplots
 from scipy.stats import norm
 
 class GBMmodel:
-    def __init__(self, r, q, vol, T, increment):
+    def __init__(self, r, q, vol, T, num_steps):
         self.rate = r
         self.divyield = q
         self.vol = vol
