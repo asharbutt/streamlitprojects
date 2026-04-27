@@ -52,13 +52,12 @@ class monteCarlo:
     def run_sim(self):
         spot_up = np.full(self.num_sims ,self.initial_spot)
         spot_down = np.full(self.num_sims ,self.initial_spot)
-            for j in range(1, self.num_steps+1):
-                dS, dS_2 = self.process_model.get_step(spot_up, spot_down)
-                spot_up = spot_up + dS
-                spot_down = spot_down + dS_2
-                self.simulated_matrix_spot [:self.num_sims, j] = spot_up
-                self.simulated_matrix_spot [self.num_sims:, j] = spot_down
-
+        for j in range(1, self.num_steps+1):
+            dS, dS_2 = self.process_model.get_step(spot_up, spot_down)
+            spot_up = spot_up + dS
+            spot_down = spot_down + dS_2
+            self.simulated_matrix_spot [:self.num_sims, j] = spot_up
+            self.simulated_matrix_spot [self.num_sims:, j] = spot_down
         self.simulated_final_spot_vector = self.simulated_matrix_spot[:, -1]
 
 def bs_price(type_flag, S,k,t,r,vol,q):
