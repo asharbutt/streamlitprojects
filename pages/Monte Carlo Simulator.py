@@ -37,23 +37,23 @@ T = st.sidebar.number_input("Time to Expiry (years)", value=1.0, min_value=0.01,
 r = st.sidebar.number_input("Risk-Free Rate", value=0.05, min_value=-0.05, max_value=0.30, step=0.005, format="%.3f")
 vol = st.sidebar.number_input("Volatility (σ)", value=0.20, min_value=0.01, max_value=2.0, step=0.01, format="%.2f")
 q = st.sidebar.number_input("Dividend Yield (q)", value=0.0, min_value=0.0, max_value=0.20, step=0.005, format="%.3f")
-numsims = int(st.sidebar.number_input("Number of Simulations", value=1, min_value=1, max_value=1000000000000, step=1))
-increment = st.sidebar.number_input("Increment as fraction of year", value=0.01, min_value=0.00000001, max_value=100000.0, step=0.0000001, format="%.3f")
+num_sims = int(st.sidebar.number_input("Number of Simulations", value=1, min_value=1, max_value=1000000000000, step=1))
+num_steps = st.sidebar.number_input("Increment as fraction of year", value=0.01, min_value=0.00000001, max_value=100000.0, step=0.0000001, format="%.3f")
 process_dropdown = st.sidebar.selectbox("Asset process", ( "Arithmetic Brownian Motion", "Geometric  Brownian Motion"))
 option_type = st.sidebar.radio("Option Type", ["call", "put"])
 
 #simulate the process paths
 
 if process_dropdown == "Arithmetic Brownian Motion":
-    process_model = mc.arithmetic_model(r,q,vol,T,increment)
+    process_model = mc.arithmetic_model(r,q,vol,T,num_steps)
 elif process_dropdown == "Geometric  Brownian Motion":
-    process_model = mc.GBMmodel(r,q,vol,T,increment)  #we create an object for the process model we want (possibly change this to something else using a dropdown int he future)
-simulation = mc.monteCarlo(S,r,q,vol, T,increment,numsims, process_model)
+    process_model = mc.GBMmodel(r,q,vol,T,num_steps)  #we create an object for the process model we want (possibly change this to something else using a dropdown int he future)
+simulation = mc.monteCarlo(S,r,q,vol, T,num_steps,num_sims, process_model)
 simulation.run_sim()
 
 option_price, payoff_vector = mc.price_mc_vanilla(simulation.final_vector, K, option_type, T, r)
 
-convergence_vector = np.zeros(numsims * 2)
+convergence_vector = np.zeros(num_sims * 2)
 convergence_vector = np.cumsum(payoff_vector) / np.arange(1, len(payoff_vector) + 1, 1)
 
 bs_value = mc.bs_price(option_type, S,K,T,r,vol,q)
