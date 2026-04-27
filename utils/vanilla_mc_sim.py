@@ -10,53 +10,56 @@ class GBMmodel:
         self.divyield = q
         self.vol = vol
         self.maturity = T
-        self.dt = increment
+        self.dt = T / num_steps
 
-    def get_step(self, spot, rv):
-        return (self.rate-self.divyield) * self.dt * spot + self.vol * spot * rv * np.sqrt(self.dt)
+    def get_step(self, spot_up, spot_down):
+        z = np.random.normal(0, 1, size=len(spot_up))
+        dS_up = spot_up*np.exp((self.rate-self.divyield - 0.5*self.vol*self.vol)*self.dt + self.vol*np.sqrt(self.dt)*z)
+        dS_down = spot_down*np.exp((self.rate-self.divyield - 0.5*self.vol*self.vol)*self.dt + self.vol*np.sqrt(self.dt)*-z)
+        return dS_up-spot_up, dS_down-spot_down
 
 
 class arithmetic_model:
-    def  __init__(self, r, q, vol, T, increment):
+    def  __init__(self, r, q, vol, T, num_steps):
         self.rate = r
         self.divyield = q
         self.vol = vol
         self.maturity = T
-        self.dt = increment
+        self.dt = T / num_steps
 
-    def get_step(self, spot, rv):
-        return (self.rate-self.divyield) * self.dt + self.vol * rv * np.sqrt(self.dt)
+    def get_step(self, spot_up, spot_down):
+        z = np.random.normal(0, 1, siz=len(spot_up))
+        dS = (self.rate - self.divyield) * self.dt + self.vol * z * np.sqrt(self.dt)
+        dS_2 = (self.rate - self.divyield) * self.dt + self.vol * -z * np.sqrt(self.dt)
+        return dS, dS_2
 
 class monteCarlo:
 
-    def __init__(self, spot_0, r, q, vol, T, increment, num_sims, model):
+    def __init__(self, spot_0, r, q, vol_0, T, num_steps, num_sims, model):
         self.initial_spot = spot_0
         self.rate = r
         self.divyield = q
         self.vol = vol
         self.maturity = T
-        self.dt = increment
+        self.dt = T / num_steps
         self.num_sims = num_sims
-        self.simulated_matrix = np.zeros((self.num_sims*2, int(self.maturity / self.dt)+1))
-        self.simulated_matrix[:, 0] = self.initial_spot
-
+        self.simulated_matrix_spot = np.zeros((self.num_sims*2, num_steps+1))
+        self.simulated_matrix_vol = np.zeros((self.num_sims*2, num_steps+1))
+        self.simulated_matrix_spot[:, 0] = self.initial_spot
+        self.num_steps = num_steps
         self.process_model = model
 
-
-
     def run_sim(self):
-        for i in range(self.num_sims):
-            spot_up = self.initial_spot
-            spot_down = self.initial_spot
-            for j in range(1, int(self.maturity / self.dt)+1):
-                z = np.random.normal(0, 1)
-                dS = self.process_model.get_step(spot_up, z)
-                dS_2 = self.process_model.get_step(spot_down, -z)
-                spot_up += dS
-                spot_down += dS_2
-                self.simulated_matrix [i, j] = spot_up
-                self.simulated_matrix[i + self.num_sims, j] = spot_down
-        self.final_vector = self.simulated_matrix[:, -1]
+        spot_up = np.full(self.num_sims ,self.initial_spot)
+        spot_down = np.full(self.num_sims ,self.initial_spot)
+            for j in range(1, self.num_steps+1):
+                dS, dS_2 = self.process_model.get_step(spot_up, spot_down)
+                spot_up = spot_up + dS
+                spot_down = spot_down + dS_2
+                self.simulated_matrix_spot [:self.num_sims, j] = spot_up
+                self.simulated_matrix_spot [self.num_sims:, j] = spot_down
+
+        self.simulated_final_spot_vector = self.simulated_matrix_spot[:, -1]
 
 def bs_price(type_flag, S,k,t,r,vol,q):
     if type_flag == 'call':
