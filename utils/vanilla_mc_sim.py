@@ -28,7 +28,7 @@ class arithmetic_model:
         self.dt = T / num_steps
 
     def get_step(self, spot_up, spot_down):
-        z = np.random.normal(0, 1, siz=len(spot_up))
+        z = np.random.normal(0, 1, size=len(spot_up))
         dS = (self.rate - self.divyield) * self.dt + self.vol * z * np.sqrt(self.dt)
         dS_2 = (self.rate - self.divyield) * self.dt + self.vol * -z * np.sqrt(self.dt)
         return dS, dS_2
