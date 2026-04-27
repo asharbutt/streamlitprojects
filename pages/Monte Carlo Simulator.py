@@ -38,7 +38,7 @@ r = st.sidebar.number_input("Risk-Free Rate", value=0.05, min_value=-0.05, max_v
 vol = st.sidebar.number_input("Volatility (σ)", value=0.20, min_value=0.01, max_value=2.0, step=0.01, format="%.2f")
 q = st.sidebar.number_input("Dividend Yield (q)", value=0.0, min_value=0.0, max_value=0.20, step=0.005, format="%.3f")
 num_sims = int(st.sidebar.number_input("Number of Simulations", value=1, min_value=1, max_value=1000000000000, step=1))
-num_steps = st.sidebar.number_input("Increment as fraction of year", value=0.01, min_value=0.00000001, max_value=100000.0, step=0.0000001, format="%.3f")
+num_steps = int(st.sidebar.number_input("Number of Steps", value=1, min_value=1, max_value=100000.0, step=1)_
 process_dropdown = st.sidebar.selectbox("Asset process", ( "Arithmetic Brownian Motion", "Geometric  Brownian Motion"))
 option_type = st.sidebar.radio("Option Type", ["call", "put"])
 
