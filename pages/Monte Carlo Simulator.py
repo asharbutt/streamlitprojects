@@ -51,7 +51,7 @@ elif process_dropdown == "Geometric  Brownian Motion":
 simulation = mc.monteCarlo(S,r,q,vol, T,num_steps,num_sims, process_model)
 simulation.run_sim()
 
-option_price, payoff_vector = mc.price_mc_vanilla(simulation.final_vector, K, option_type, T, r)
+option_price, payoff_vector = mc.price_mc_vanilla(simulation.simulated_final_spot_vector , K, option_type, T, r)
 
 convergence_vector = np.zeros(num_sims * 2)
 convergence_vector = np.cumsum(payoff_vector) / np.arange(1, len(payoff_vector) + 1, 1)
