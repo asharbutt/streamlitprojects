@@ -39,7 +39,7 @@ class monteCarlo:
         self.initial_spot = spot_0
         self.rate = r
         self.divyield = q
-        self.vol = vol
+        self.vol = vol_0
         self.maturity = T
         self.dt = T / num_steps
         self.num_sims = num_sims
