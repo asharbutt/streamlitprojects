@@ -43,10 +43,10 @@ class monteCarlo:
         self.maturity = T
         self.dt = T / num_steps
         self.num_sims = num_sims
-        self.simulated_matrix_spot = np.zeros((self.num_sims*2, num_steps+1))
-        self.simulated_matrix_vol = np.zeros((self.num_sims*2, num_steps+1))
-        self.simulated_matrix_spot[:, 0] = self.initial_spot
         self.num_steps = num_steps
+        self.simulated_matrix_spot = np.zeros((self.num_sims*2, self.num_steps+1))
+        self.simulated_matrix_vol = np.zeros((self.num_sims*2, self.num_steps+1))
+        self.simulated_matrix_spot[:, 0] = self.initial_spot
         self.process_model = model
 
     def run_sim(self):
