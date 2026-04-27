@@ -63,11 +63,11 @@ st.write("The option price is: ", f"{option_price:.4f}")
 fig = make_subplots(rows=2, cols=2,subplot_titles=("Simulated Paths (Visualisation limited to 2000 paths)", "Distribution of terminal spot price", "Convergence of simulated average payoff to BS price"),horizontal_spacing=0,)
 if num_sims >= 2000:
     for i in range(2000):
-        fig.add_trace(go.Scatter(y=simulation.simulated_matrix[i,:], mode="lines",name=f"path {i}"), row=1, col=1)
+        fig.add_trace(go.Scatter(y=simulation.simulated_matrix_spot [i,:], mode="lines",name=f"path {i}"), row=1, col=1)
 else:
     for i in range(num_sims):
-        fig.add_trace(go.Scatter(y=simulation.simulated_matrix[i,:], mode="lines",name=f"path {i}"), row=1, col=1)
-fig.add_trace(go.Histogram(y=simulation.simulated_matrix[:,-1],nbinsy=150),row=1,col=2)
+        fig.add_trace(go.Scatter(y=simulation.simulated_matrix_spot [i,:], mode="lines",name=f"path {i}"), row=1, col=1)
+fig.add_trace(go.Histogram(y=simulation.simulated_matrix_spot [:,-1],nbinsy=150),row=1,col=2)
 
 fig.add_trace(go.Scatter(y=convergence_vector, mode="lines",name=f"path {i}"), row=2, col=1)
 fig.add_hline(y=bs_value, line_color="grey",row=2,col=1) #added this to make the y-axis a lot more solid around y=0
