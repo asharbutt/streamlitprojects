@@ -40,7 +40,8 @@ q = st.sidebar.number_input("Dividend Yield (q)", value=0.0, min_value=0.0, max_
 num_sims = int(st.sidebar.number_input("Number of Simulations", value=1, min_value=1, max_value=1000000000000, step=1))
 num_steps = int(st.sidebar.number_input("Number of Steps", value=1, min_value=1, max_value=100000, step=1))
 process_dropdown = st.sidebar.selectbox("Asset process", ( "Arithmetic Brownian Motion", "Geometric  Brownian Motion"))
-option_type = st.sidebar.radio("Option Type", ["call", "put"])
+option_payoff = st.sidebar.radio("Option Payoff", ["call", "put"])
+option_type = st.sidebar.radion("Option Type" ["European", "American"])
 
 #simulate the process paths
 
@@ -51,12 +52,13 @@ elif process_dropdown == "Geometric  Brownian Motion":
 simulation = mc.monteCarlo(S,r,q,vol, T,num_steps,num_sims, process_model)
 simulation.run_sim()
 
-option_price, payoff_vector = mc.price_mc_vanilla(simulation.simulated_final_spot_vector , K, option_type, T, r)
-
+if option_type == "European":
+    option_price, payoff_vector = mc.price_mc_vanilla_european(simulation.simulated_final_spot_vector , K, option_payoff, T, r)
+    bs_value = mc.bs_price(option_type, S,K,T,r,vol,q)
+elif option_type == "American":
+    option_price = ms.price_mac_vanilla_american(simulation.simulated_matrix_spot, K, option_payoff, T, r)
 convergence_vector = np.zeros(num_sims * 2)
 convergence_vector = np.cumsum(payoff_vector) / np.arange(1, len(payoff_vector) + 1, 1)
-
-bs_value = mc.bs_price(option_type, S,K,T,r,vol,q)
 
 st.write("The option price is: ", f"{option_price:.4f}")
 
