@@ -55,10 +55,11 @@ simulation.run_sim()
 if option_type == "European":
     option_price, payoff_vector = mc.price_mc_vanilla_european(simulation.simulated_final_spot_vector , K, option_payoff, T, r)
     bs_value = mc.bs_price(option_type, S,K,T,r,vol,q)
+    convergence_vector = np.zeros(num_sims * 2)
+    convergence_vector = np.cumsum(payoff_vector) / np.arange(1, len(payoff_vector) + 1, 1)
 elif option_type == "American":
     option_price = mc.price_mc_vanilla_american(simulation.simulated_matrix_spot, K, option_payoff, T, r)
-convergence_vector = np.zeros(num_sims * 2)
-convergence_vector = np.cumsum(payoff_vector) / np.arange(1, len(payoff_vector) + 1, 1)
+
 
 st.write("The option price is: ", f"{option_price:.4f}")
 
@@ -70,10 +71,9 @@ else:
     for i in range(num_sims):
         fig.add_trace(go.Scatter(y=simulation.simulated_matrix_spot [i,:], mode="lines",name=f"path {i}"), row=1, col=1)
 fig.add_trace(go.Histogram(y=simulation.simulated_matrix_spot [:,-1],nbinsy=150),row=1,col=2)
-
-fig.add_trace(go.Scatter(y=convergence_vector, mode="lines",name=f"path {i}"), row=2, col=1)
-fig.add_hline(y=bs_value, line_color="grey",row=2,col=1) #added this to make the y-axis a lot more solid around y=0
-
+if option_type == "European":
+    fig.add_trace(go.Scatter(y=convergence_vector, mode="lines",name=f"path {i}"), row=2, col=1)
+    fig.add_hline(y=bs_value, line_color="grey",row=2,col=1) #added this to make the y-axis a lot more solid around y=0
 
 fig.update_layout(showlegend=False)    
 fig.update_yaxes(showticklabels=False, showgrid=False, zeroline=False, row=1, col=2)
