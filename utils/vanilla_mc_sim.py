@@ -80,8 +80,8 @@ def price_mc_vanilla_european(mc_final_vector, strike, option_flag, T,r):
     return price,payoff_vector
 
 def price_mc_vanilla_american(asset_path_matrix, strike, option_flag, T,r):
-    if option_flag == "call": flag = 1
-    else: flag = -1
+    if option_flag == "call": option_flag = 1
+    else: option_flag = -1
     
     # We start from the end and work out way backwards
     # Calculate the final payoff first:
