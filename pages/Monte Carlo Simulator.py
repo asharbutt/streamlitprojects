@@ -56,7 +56,7 @@ if option_type == "European":
     option_price, payoff_vector = mc.price_mc_vanilla_european(simulation.simulated_final_spot_vector , K, option_payoff, T, r)
     bs_value = mc.bs_price(option_type, S,K,T,r,vol,q)
 elif option_type == "American":
-    option_price = ms.price_mac_vanilla_american(simulation.simulated_matrix_spot, K, option_payoff, T, r)
+    option_price = mc.price_mac_vanilla_american(simulation.simulated_matrix_spot, K, option_payoff, T, r)
 convergence_vector = np.zeros(num_sims * 2)
 convergence_vector = np.cumsum(payoff_vector) / np.arange(1, len(payoff_vector) + 1, 1)
 
