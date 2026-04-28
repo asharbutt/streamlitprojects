@@ -71,10 +71,51 @@ def bs_price(type_flag, S,k,t,r,vol,q):
 
     return type_val*S*norm.cdf(type_val*d1) - type_val*k*np.exp(-r*t)*norm.cdf(type_val*d2)
 
-def price_mc_vanilla(mc_final_vector, strike, option_flag, T,r):
+def price_mc_vanilla_european(mc_final_vector, strike, option_flag, T,r):
     if option_flag == "call": flag = 1
     else: flag = -1
     payoff_vector = np.zeros(len(mc_final_vector))
     payoff_vector = np.maximum(flag*(mc_final_vector-strike),0)
     price = np.exp(-r*T)*np.mean(payoff_vector)
     return price,payoff_vector
+
+def price_mc_vanilla_american(asset_path_matrix, strike, option_flag, T,r):
+    # We start from the end and work out way backwards
+    # Calculate the final payoff first:
+    dt = T / (asset_path_matrix.shape[1]-1)
+    cashflow_vector = np.maximum(option_flag*(asset_path_matrix[:,-1]-strike),0) # Initialise a vector to keep track of all of the cashflow occurences - given a cashflow can only happen once in a path, we dont need a matrix
+    cashflow_timing_vector = np.full(asset_path_matrix.shape[0], 0) # Initialise a vector to keep track of all of the cashflow timing occurences
+    cashflow_timing_vector[cashflow_vector>0] = T # where the payoff is positive, set cashflow time
+
+    regression_y = np.zeros(asset_path_matrix.shape[0])# This will store our discounted payoffs for the regression
+    regression_x = np.zeros(asset_path_matrix.shape[0])# This will store our x payoffs for the regression
+
+    for i in range(asset_path_matrix.shape[1]-2,0,-1):
+        current_payoff = np.maximum(option_flag*(asset_path_matrix[:,i]-strike),0)
+
+        itm_paths = current_payoff > 0
+
+        regression_x = asset_path_matrix[itm_paths,i]
+        regression_y = np.exp(-r * dt* (cashflow_timing_vector[itm_paths] - i)) * cashflow_vector[itm_paths]
+
+        # Fit a second degree poly fit curve to the regression:
+        z = np.polyfit(regression_x, regression_y, 2)
+
+        exercise_value = regression_x
+        continuation_value = np.polyval(z, asset_path_matrix[itm_paths, i])
+
+
+        # Get the boolean mask of where the path leads to an optimal exercise i.e. exercise > the continuation value we calculated
+        optimal_exercise = current_payoff[itm_paths] > continuation_value
+
+        itm_index = np.where(itm_paths==True)[0] # Get the index locations of where we had exercise.
+        optimal_index = itm_index[optimal_exercise] # Of those index locations of exercise, we pass which ones we want to keep from the boolean mask
+
+        cashflow_vector[optimal_index] = current_payoff[optimal_index] # Only those that we want to keep will be replaced, the rest will remain the same i.e. the cashflows previously calculated should remain
+
+        cashflow_timing_vector[optimal_index] = i # Add the timing of the cashflow to the vector
+
+    # discount each cashflow back to start
+    discounted_cashflow = np.exp(-r*cashflow_timing_vector)*cashflow_vector
+
+    return np.average(discounted_cashflow)
