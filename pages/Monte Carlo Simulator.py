@@ -41,7 +41,7 @@ num_sims = int(st.sidebar.number_input("Number of Simulations", value=1, min_val
 num_steps = int(st.sidebar.number_input("Number of Steps", value=1, min_value=1, max_value=100000, step=1))
 process_dropdown = st.sidebar.selectbox("Asset process", ( "Arithmetic Brownian Motion", "Geometric  Brownian Motion"))
 option_payoff = st.sidebar.radio("Option Payoff", ["call", "put"])
-option_type = st.sidebar.radion("Option Type" ["European", "American"])
+option_type = st.sidebar.radio("Option Type", ["European", "American"])
 
 #simulate the process paths
 
